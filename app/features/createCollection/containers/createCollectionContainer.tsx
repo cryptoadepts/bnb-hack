@@ -4,12 +4,11 @@ import type { DeployMethod } from "~/features/createCollection/types";
 
 // components
 import { CollectionDeployMethod } from "~/features/createCollection/components/collectionDeployMethod";
-import { CollectionPresets } from "~/features/createCollection/components/collectionPresets";
-import { images } from "~/features/createCollection/namespace";
+import { Button } from "~/components/button";
 
 type Props = {
   isLoading: boolean;
-  createCollection: (deployMethod: DeployMethod, image: any) => void;
+  createCollection: () => void;
 };
 
 export const CreateCollectionContainer = (props: Props) => {
@@ -18,17 +17,11 @@ export const CreateCollectionContainer = (props: Props) => {
   const [deployCollection, setDeployCollection] =
     useState<DeployMethod>("default");
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [selectedPreset, setSelectedPreset] = useState<string>("1");
 
   const handleCreateCollection = async () => {
     setIsLoading(true);
 
-    const image = images.find((image) => image.id === selectedPreset);
-    const maybeImg = await fetch(image?.src || "");
-    const hash = await maybeImg.blob();
-    // TODO: add hash for each image to pass it to contract;
-
-    createCollection(deployCollection, image?.src);
+    createCollection();
   };
 
   return (
@@ -41,18 +34,7 @@ export const CreateCollectionContainer = (props: Props) => {
         onSelectDeployCollection={setDeployCollection}
       />
 
-      <CollectionPresets
-        disabled={isLoading}
-        selectedPreset={selectedPreset}
-        onSelectPreset={setSelectedPreset}
-      />
-
-      <button
-        onClick={handleCreateCollection}
-        className="w-[min(240px,100%)] rounded-full bg-[#FF0099] px-[96px] py-[22px]"
-      >
-        create
-      </button>
+      <Button type="submit" onClick={handleCreateCollection} />
     </div>
   );
 };

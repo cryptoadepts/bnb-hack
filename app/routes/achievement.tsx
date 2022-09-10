@@ -4,33 +4,45 @@ import { useState } from "react";
 import type { ActionFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { useActionData } from "@remix-run/react";
-import { createCollectionTransaction } from "~/models/transaction.server";
+import { createAchievementTransaction } from "~/models/transaction.server";
 
 // Wallet:
 import { useWallet } from "~/context/walletContext";
 
 // components:
-import { CreateCollectionContainer } from "~/features/createCollection/containers/createCollectionContainer";
+import { CreateAchievementContainer } from "~/features/createAchievement/containers/createAchievementContainer";
 
 export const action: ActionFunction = async ({ request }) => {
-  const tx = createCollectionTransaction({ collectionId: "", userId: "" });
+  const formData = await request.formData();
+
+  const imageHash = formData.get("imageHash") as string;
+  const name = formData.get("name") as string;
+  const points = formData.get("points") as string;
+  const tallyId = formData.get("tallyId") as string;
+
+  const tx = createAchievementTransaction({
+    imageHash,
+    name,
+    points: Number(points),
+    tallyId,
+  });
 
   try {
     return json({ tx });
   } catch (error: unknown) {
-    console.log("create collection transaction failed ❌", { error });
+    console.log("create achievement transaction failed ❌", { error });
     return new Response("ERROR", { status: 500 });
   }
 };
 
-const Collection = () => {
+const Achievement = () => {
   const data = useActionData<typeof action>();
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const { sendTransaction } = useWallet();
 
-  const handleCreateCollection = async () => {
+  const handleCreateAchievement = async () => {
     setIsLoading(true);
 
     const tx = await sendTransaction(data.tx);
@@ -41,12 +53,12 @@ const Collection = () => {
 
   return (
     <main className="relative mx-auto mt-[50px] flex h-full w-[min(840px,100%)] flex-col justify-start px-5">
-      <CreateCollectionContainer
+      <CreateAchievementContainer
         isLoading={isLoading}
-        createCollection={handleCreateCollection}
+        createAchievement={handleCreateAchievement}
       />
     </main>
   );
 };
 
-export default Collection;
+export default Achievement;

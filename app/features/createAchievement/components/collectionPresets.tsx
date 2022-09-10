@@ -1,5 +1,5 @@
 import { clsx } from "clsx";
-import { images } from "~/features/createCollection/namespace";
+import { images } from "~/features/createAchievement/namespace";
 
 type Props = {
   disabled: boolean;
