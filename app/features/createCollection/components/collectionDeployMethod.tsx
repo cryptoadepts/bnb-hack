@@ -17,7 +17,7 @@ export const CollectionDeployMethod = React.memo((props: Props) => {
   const { deployCollection, onSelectDeployCollection, disabled } = props;
 
   return (
-    <div className="mt-[50px] flex gap-[50px] pl-1">
+    <div className="flex gap-[50px] pl-1">
       {deployCollectionMethod.map((deployMethod) => (
         <div key={deployMethod.id} className="flex items-center">
           <input

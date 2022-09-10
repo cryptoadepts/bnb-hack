@@ -34,7 +34,7 @@ export const CreateCollectionContainer = (props: Props) => {
   };
 
   return (
-    <>
+    <div className="flex h-full flex-col gap-[50px]">
       <h1 className="text-[40px] leading-[48px]">create collection</h1>
 
       <CollectionDeployMethod
@@ -49,14 +49,12 @@ export const CreateCollectionContainer = (props: Props) => {
         onSelectPreset={setSelectedPreset}
       />
 
-      <input type="file" />
-
       <button
         onClick={handleCreateCollection}
-        className="mt-[50px] rounded-full bg-[#FF0099] px-[96px] py-[22px]"
+        className="w-[min(240px,100%)] rounded-full bg-[#FF0099] px-[96px] py-[22px]"
       >
         create
       </button>
-    </>
+    </div>
   );
 };

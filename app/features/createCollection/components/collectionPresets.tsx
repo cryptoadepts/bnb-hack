@@ -11,7 +11,7 @@ export const CollectionPresets = (props: Props) => {
   const { disabled, selectedPreset, onSelectPreset } = props;
 
   return (
-    <div className="mt-[50px] flex gap-5">
+    <div className="flex gap-5">
       {images.map((image) => (
         <button
           className={clsx(
