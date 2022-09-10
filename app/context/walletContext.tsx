@@ -1,9 +1,20 @@
-import React, { createContext, useContext, useEffect, useMemo } from "react";
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import { ethers } from "ethers";
-import { useState } from "react";
-import type { Web3Provider } from "@ethersproject/providers";
+import type {
+  TransactionResponse,
+  Web3Provider,
+} from "@ethersproject/providers";
 import { toHex } from "~/utils/str_num";
 import { nanoid } from "nanoid";
+import type { Deferrable } from "@ethersproject/properties";
+import type { TransactionRequest } from "@ethersproject/abstract-provider";
+
 const getReadableNonce = () => `Log in to bnb-hack. Nonce ${nanoid()}`;
 
 type WalletEventsSubscriber = (
@@ -13,12 +24,16 @@ type WalletEventsSubscriber = (
 type WalletContextType = {
   connectWallet: () => Promise<Web3Provider | undefined>;
   signMessage: () => Promise<void>;
+  sendTransaction: (
+    tx: Deferrable<TransactionRequest>
+  ) => Promise<TransactionResponse | undefined>;
   refreshState: () => void;
 };
 
 const WalletContext = createContext<WalletContextType>({
   connectWallet: async () => undefined,
   signMessage: async () => undefined,
+  sendTransaction: async () => undefined,
   refreshState: () => undefined,
 });
 
@@ -60,13 +75,11 @@ export const WalletProvider: React.FC<Props> = ({ children }) => {
     }
   };
 
-  const sendTransaction = async () => {
+  const sendTransaction = async (tx: Deferrable<TransactionRequest>) => {
     if (!web3Provider) return;
     try {
       const signer = web3Provider.getSigner();
-      const tx = await signer.sendTransaction({});
-
-      console.log(tx.hash);
+      return await signer.sendTransaction({});
     } catch (error: any) {
       setError(error);
     }
@@ -204,6 +217,7 @@ export const WalletProvider: React.FC<Props> = ({ children }) => {
       connectWallet,
       signMessage,
       refreshState,
+      sendTransaction,
     }),
     [signMessage]
   );
