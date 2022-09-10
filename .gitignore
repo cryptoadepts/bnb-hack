@@ -4,7 +4,8 @@ node_modules
 /public/build
 .env
 
-.idea
+.idea/
+/.idea
 
 /cypress/screenshots
 /cypress/videos
