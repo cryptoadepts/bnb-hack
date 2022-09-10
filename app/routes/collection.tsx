@@ -1,6 +1,6 @@
 /* This example requires Tailwind CSS v2.0+ */
 import { useState } from "react";
-import { CreateCollectionStep } from "~/components/steps/createCollectionStep";
+import { CreateCollectionContainer } from "~/features/createCollection/containers/createCollectionContainer";
 import { CreateAchievementStep } from "~/components/steps/createAchievementStep";
 
 type Step = "createCollection" | "createAchievement";
@@ -13,7 +13,7 @@ const Collection = () => {
       <nav aria-label="Progress">
         <ol role="list" className="overflow-hidden">
           {currentStep === "createCollection" ? (
-            <CreateCollectionStep
+            <CreateCollectionContainer
               onNext={() => setCurrentStep("createAchievement")}
             />
           ) : null}
