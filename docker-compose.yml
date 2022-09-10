@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:13.6
+    restart: always
+    environment:
+      - POSTGRES_HOST_AUTH_METHOD=trust
+    ports:
+      - "5433:5432"
+    networks:
+      - snaproll-app-network
+
+networks:
+  snaproll-app-network:
+    driver: bridge
