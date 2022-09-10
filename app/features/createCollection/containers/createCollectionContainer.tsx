@@ -20,15 +20,13 @@ export const CreateCollectionContainer = (props: Props) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [selectedPreset, setSelectedPreset] = useState<string>("1");
 
-  const image = images.find((image) => image.id === selectedPreset);
-  console.log(image?.src);
-
   const handleCreateCollection = async () => {
     setIsLoading(true);
 
     const image = images.find((image) => image.id === selectedPreset);
     const maybeImg = await fetch(image?.src || "");
-    const asd = await maybeImg.blob();
+    const hash = await maybeImg.blob();
+    // TODO: add hash for each image to pass it to contract;
 
     createCollection(deployCollection, image?.src);
   };
