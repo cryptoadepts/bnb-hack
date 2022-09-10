@@ -13,7 +13,7 @@ export default function Index() {
   };
 
   return (
-    <main className="relative min-h-screen bg-white sm:flex sm:items-center sm:justify-center">
+    <main className="relative min-h-screen sm:flex sm:items-center sm:justify-center">
       <button onClick={handlerConnect}>Try out</button>
     </main>
   );
