@@ -1,9 +1,9 @@
-import type { ActionArgs, LoaderArgs, MetaFunction } from "@remix-run/node";
-import { json, redirect } from "@remix-run/node";
+import type { ActionArgs, MetaFunction } from "@remix-run/node";
+import { json } from "@remix-run/node";
 import { useFetcher, useNavigate } from "@remix-run/react";
 import * as React from "react";
 
-import { createUserSession, getUserId } from "~/session.server";
+import { createUserSession } from "~/session.server";
 import { useWallet } from "~/context/walletContext";
 import { Button } from "~/components/buttons/button";
 import { verifyLogin } from "~/models/user.server";
@@ -47,8 +47,7 @@ export default function LoginPage() {
   const fetcher = useFetcher();
   const navigate = useNavigate();
 
-  const { account, signature, message, connectWallet, signMessage } =
-    useWallet();
+  const { account, connectWallet, signMessage } = useWallet();
 
   const handleConnect = async () => {
     const provider = await connectWallet();
@@ -70,11 +69,9 @@ export default function LoginPage() {
 
   return (
     <main className="relative min-h-screen sm:flex sm:items-center sm:justify-center">
-      <fetcher.Form method="post" className="space-y-6">
-        <Button type="submit" onClick={handleConnect}>
-          Connect
-        </Button>
-      </fetcher.Form>
+      <Button type="submit" onClick={handleConnect}>
+        Connect
+      </Button>
     </main>
   );
 }
