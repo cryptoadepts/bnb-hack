@@ -1,5 +1,8 @@
 import type { ActionFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
+import { BigNumber, ethers } from "ethers";
+import { mint } from "~/models/transaction.server";
+import Achievement from "../achievement/new";
 // import crypto from "crypto";
 
 // {
@@ -77,6 +80,32 @@ export const action: ActionFunction = async ({ request }) => {
   const payload = await request.json();
   console.log("payload", payload);
 
+  let address = "";
+  let email = "";
+  for (const field of payload.data.fields) {
+    if (field.label === "address") {
+      address = field.value;
+    }
+
+    if (field.label === "email") {
+      email = field.value;
+    }
+  }
+
+  if (ethers.utils.isAddress(address)) {
+    return json({ success: true }, 200);
+  }
+
+  const formId = payload.data.formId;
+
+  //TODO: get achievement id by formId
+  const collectionId = "";
+  const achievementId = BigNumber.from(0);
+
+  if (collectionId != "") {
+    const tx = await mint({ collectionId, receiver: address, achievementId });
+    await tx.wait(1); //TODO: test tally timeout
+  }
   /* Validate the webhook */
   // const signature = request.headers.get("X-Hub-Signature-256");
   // const generatedSignature = `sha256=${crypto

@@ -15,12 +15,14 @@ import { CreateAchievementContainer } from "~/features/createAchievement/contain
 export const action: ActionFunction = async ({ request }) => {
   const formData = await request.formData();
 
+  const collectionId = formData.get("collectionId") as string;
   const imageHash = formData.get("imageHash") as string;
   const name = formData.get("name") as string;
   const points = formData.get("points") as string;
   const tallyId = formData.get("tallyId") as string;
 
-  const tx = createAchievementTransaction({
+  const tx = await createAchievementTransaction({
+    collectionId,
     imageHash,
     name,
     points: Number(points),
@@ -28,7 +30,7 @@ export const action: ActionFunction = async ({ request }) => {
   });
 
   try {
-    return json({ tx });
+    return json({ tx: { to: tx.to, data: tx.data } });
   } catch (error: unknown) {
     console.log("create achievement transaction failed ❌", { error });
     return new Response("ERROR", { status: 500 });
@@ -45,6 +47,7 @@ const Achievement = () => {
   const handleCreateAchievement = async () => {
     setIsLoading(true);
 
+    
     const tx = await sendTransaction(data.tx);
     console.log(tx);
 

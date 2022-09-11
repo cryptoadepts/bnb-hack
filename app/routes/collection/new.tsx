@@ -13,10 +13,10 @@ import { useWallet } from "~/context/walletContext";
 import { CreateCollectionContainer } from "~/features/createCollection/containers/createCollectionContainer";
 
 export const action: ActionFunction = async ({ request }) => {
-  const tx = createCollectionTransaction({ collectionId: "", userId: "" });
+  const tx = await createCollectionTransaction();
 
   try {
-    return json({ tx });
+    return json({ tx: { to: tx.to, data: tx.data } });
   } catch (error: unknown) {
     console.log("create collection transaction failed ❌", { error });
     return new Response("ERROR", { status: 500 });
