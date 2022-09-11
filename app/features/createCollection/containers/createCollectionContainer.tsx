@@ -5,6 +5,7 @@ import type { DeployMethod } from "~/features/createCollection/types";
 // components
 import { CollectionDeployMethod } from "~/features/createCollection/components/collectionDeployMethod";
 import { Button } from "~/components/buttons/button";
+import { CollectionPreview } from "~/features/createCollection/components/collectionPreview";
 
 type Props = {
   isLoading: boolean;
@@ -30,6 +31,8 @@ export const CreateCollectionContainer = (props: Props) => {
         deployCollection={deployCollection}
         onSelectDeployCollection={setDeployCollection}
       />
+
+      <CollectionPreview />
 
       <Button
         type="submit"
