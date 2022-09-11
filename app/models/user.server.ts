@@ -1,7 +1,6 @@
 import type { User } from "@prisma/client";
 
 import { prisma } from "~/db.server";
-import { utils } from "ethers";
 
 export type { User } from "@prisma/client";
 
@@ -21,6 +20,7 @@ export async function verifyLogin(walletAddress: string): Promise<User | null> {
   let user = await prisma.user.findUnique({
     where: { address: walletAddress },
   });
+
   if (!user) {
     user = await createUser(walletAddress);
   }
