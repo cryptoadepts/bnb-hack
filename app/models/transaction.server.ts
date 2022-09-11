@@ -1,23 +1,16 @@
 import { ethers } from "ethers";
 import { env } from "process";
 import { Factory__factory } from "typechain-types";
+import { create } from "ipfs-http-client";
 
-async function loadIpfs() {
-  const { create } = await import("ipfs-http-client");
-
-  const node = await create({
-    url: env.IPFS_URL!,
-    headers: {
-      Authorization: `Basic ${btoa(
-        env.INFURA_IPFS_PROJECT_ID + ":" + env.INFURA_IPFS_PROJECT_SECRET
-      )}`,
-    },
-  });
-
-  return node;
-}
-
-loadIpfs();
+const ipfsClient = create({
+  url: env.IPFS_URL!,
+  headers: {
+    Authorization: `Basic ${btoa(
+      env.INFURA_IPFS_PROJECT_ID + ":" + env.INFURA_IPFS_PROJECT_SECRET
+    )}`,
+  },
+});
 
 export const ethersBackendProvider = ethers.getDefaultProvider(
   env.BLOCKCHAIN_URL!
@@ -49,7 +42,6 @@ export async function createAchievementTransaction({
 }): Promise<ethers.PopulatedTransaction> {
   const f = Factory__factory.connect(factoryAddress, defaultWallet);
 
-  const ipfsClient = await loadIpfs();
   const uri = await ipfsClient.add(
     JSON.stringify({
       name: name,
