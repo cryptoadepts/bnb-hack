@@ -1,8 +1,8 @@
 import { useState } from "react";
 
 // API
-import type { ActionFunction } from "@remix-run/node";
-import { json } from "@remix-run/node";
+import type { ActionFunction, LoaderArgs } from "@remix-run/node";
+import { json, redirect } from "@remix-run/node";
 import { useActionData } from "@remix-run/react";
 import { createAchievementTransaction } from "~/models/transaction.server";
 
@@ -11,6 +11,14 @@ import { useWallet } from "~/context/walletContext";
 
 // components:
 import { CreateAchievementContainer } from "~/features/createAchievement/containers/createAchievementContainer";
+import { getUserId } from "~/session.server";
+
+export async function loader({ request }: LoaderArgs) {
+  const userId = await getUserId(request);
+  if (!userId) return redirect("/login");
+
+  return json({});
+}
 
 export const action: ActionFunction = async ({ request }) => {
   const formData = await request.formData();

@@ -1,5 +1,6 @@
 import React, {
   createContext,
+  useCallback,
   useContext,
   useEffect,
   useMemo,
@@ -22,6 +23,9 @@ type WalletEventsSubscriber = (
   cb: (arg: any) => void
 ) => void;
 type WalletContextType = {
+  account: string;
+  message: string;
+  signature: string;
   connectWallet: () => Promise<Web3Provider | undefined>;
   signMessage: () => Promise<void>;
   sendTransaction: (
@@ -31,6 +35,9 @@ type WalletContextType = {
 };
 
 const WalletContext = createContext<WalletContextType>({
+  account: "",
+  message: "",
+  signature: "",
   connectWallet: async () => undefined,
   signMessage: async () => undefined,
   sendTransaction: async () => undefined,
@@ -61,7 +68,7 @@ export const WalletProvider: React.FC<Props> = ({ children }) => {
   const [signedMessage, setSignedMessage] = useState<string>("");
   const [verified, setVerified] = useState<boolean>();
 
-  const signMessage = async () => {
+  const signMessage = useCallback(async () => {
     if (!web3Provider) return;
     try {
       const signature = await web3Provider?.provider.request?.({
@@ -73,17 +80,20 @@ export const WalletProvider: React.FC<Props> = ({ children }) => {
     } catch (error: any) {
       setError(error);
     }
-  };
+  }, [web3Provider, message, account]);
 
-  const sendTransaction = async (tx: Deferrable<TransactionRequest>) => {
-    if (!web3Provider) return;
-    try {
-      const signer = web3Provider.getSigner();
-      return await signer.sendTransaction({});
-    } catch (error: any) {
-      setError(error);
-    }
-  };
+  const sendTransaction = useCallback(
+    async (tx: Deferrable<TransactionRequest>) => {
+      if (!web3Provider) return;
+      try {
+        const signer = web3Provider.getSigner();
+        return await signer.sendTransaction({});
+      } catch (error: any) {
+        setError(error);
+      }
+    },
+    [web3Provider]
+  );
 
   const handleNetwork = (e: any) => {
     const id = e.target.value;
@@ -214,12 +224,15 @@ export const WalletProvider: React.FC<Props> = ({ children }) => {
 
   const contextValue = useMemo(
     () => ({
+      signature,
+      message,
+      account,
       connectWallet,
       signMessage,
       refreshState,
       sendTransaction,
     }),
-    [signMessage]
+    [sendTransaction, signMessage, signature, message, account]
   );
 
   return (

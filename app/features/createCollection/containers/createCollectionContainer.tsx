@@ -34,7 +34,9 @@ export const CreateCollectionContainer = (props: Props) => {
         onSelectDeployCollection={setDeployCollection}
       />
 
-      <Button type="submit" onClick={handleCreateCollection} />
+      <Button type="submit" onClick={handleCreateCollection}>
+        create
+      </Button>
     </div>
   );
 };

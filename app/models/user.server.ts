@@ -1,7 +1,7 @@
-import type { Password, User } from "@prisma/client";
-import bcrypt from "bcryptjs";
+import type { User } from "@prisma/client";
 
 import { prisma } from "~/db.server";
+import { utils } from "ethers";
 
 export type { User } from "@prisma/client";
 
@@ -9,54 +9,31 @@ export async function getUserById(id: User["id"]) {
   return prisma.user.findUnique({ where: { id } });
 }
 
-export async function getUserByEmail(email: User["email"]) {
-  return prisma.user.findUnique({ where: { email } });
-}
-
-export async function createUser(email: User["email"], password: string) {
-  const hashedPassword = await bcrypt.hash(password, 10);
-
+export async function createUser(address: User["address"]) {
   return prisma.user.create({
     data: {
-      email,
-      password: {
-        create: {
-          hash: hashedPassword,
-        },
-      },
+      address,
     },
   });
-}
-
-export async function deleteUserByEmail(email: User["email"]) {
-  return prisma.user.delete({ where: { email } });
 }
 
 export async function verifyLogin(
-  email: User["email"],
-  password: Password["hash"]
-) {
-  const userWithPassword = await prisma.user.findUnique({
-    where: { email },
-    include: {
-      password: true,
-    },
+  walletAddress: string,
+  signature: string,
+  nonce: string
+): Promise<User | null> {
+  const signerAddress = utils.verifyMessage(nonce, signature);
+
+  if (walletAddress.toLowerCase() !== signerAddress.toLowerCase()) {
+    return null;
+  }
+
+  let user = await prisma.user.findUnique({
+    where: { address: walletAddress },
   });
-
-  if (!userWithPassword || !userWithPassword.password) {
-    return null;
+  if (!user) {
+    user = await createUser(walletAddress);
   }
 
-  const isValid = await bcrypt.compare(
-    password,
-    userWithPassword.password.hash
-  );
-
-  if (!isValid) {
-    return null;
-  }
-
-  const { password: _password, ...userWithoutPassword } = userWithPassword;
-
-  return userWithoutPassword;
+  return user;
 }
