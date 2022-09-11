@@ -1,6 +1,6 @@
 import { ethers } from "ethers";
 import { env } from "process";
-import { Factory__factory } from "typechain-types";
+import { Factory__factory, NFT__factory } from "typechain-types";
 import { create } from "ipfs-http-client";
 
 const ipfsClient = create({
@@ -41,18 +41,61 @@ export async function createAchievementTransaction({
   tallyId: string;
 }): Promise<ethers.PopulatedTransaction> {
   const f = Factory__factory.connect(factoryAddress, defaultWallet);
+  const collection = NFT__factory.connect(collectionId, defaultWallet);
+  const uri = await collection.uri(0);
+  console.log(uri);
 
-  const uri = await ipfsClient.add(
-    JSON.stringify({
+  const lastId = await collection.lastItemId();
+
+  let folder: Array<any> = [];
+  if (uri !== "") {
+    const cid = uri.replace("ipfs://", "").replace("{id}.json", "");
+    const obj = new Map<string, String>();
+    for (let i = 0; i < lastId.toNumber(); i++) {
+      const id = ethers.utils
+        .hexZeroPad(ethers.BigNumber.from(i).toHexString(), 32)
+        .replace("0x", "");
+
+      const chunks = [];
+      for await (const chunk of ipfsClient.cat(cid + "/" + id + ".json")) {
+        chunks.push(chunk);
+      }
+
+      obj.set(id + ".json", Buffer.concat(chunks).toString());
+    }
+
+    folder = Array.from(obj.keys()).map((x: string) => ({
+      path: x,
+      content: obj.get(x),
+    }));
+  }
+
+  folder.push({
+    path:
+      ethers.utils.hexZeroPad(lastId.toHexString(), 32).replace("0x", "") +
+      ".json",
+    content: JSON.stringify({
       name: name,
-      image: `ipfs://${imageHash}`,
+      image: "ipfs://" + imageHash,
       tallyId: tallyId,
-    })
-  );
+    }),
+  });
+
+  const res = ipfsClient.addAll(folder, {
+    pin: true,
+    wrapWithDirectory: true,
+  });
+
+  let newCid = "";
+  for await (const file of res) {
+    console.log(file.cid);
+    console.log(file.path);
+    newCid = file.cid.toString();
+  }
 
   return await f.populateTransaction.creatAchievement(
-    collectionId,
-    "ipfs://" + uri.cid.toString(),
+    collection.address,
+    "ipfs://" + newCid + "/{id}.json",
     ethers.utils.formatEther(points)
   );
 }
