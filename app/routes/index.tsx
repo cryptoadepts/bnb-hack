@@ -27,7 +27,7 @@ export default function Index() {
         style={{ animationDuration: "60s" }}
         width={2400}
         height={2400}
-        className="absolute -bottom-[700px] z-10 animate-spin"
+        className="absolute -bottom-[-50%] z-10 animate-spin"
         alt="background"
       />
       <h1 className="z-10 text-center text-[130px] font-bold leading-[110%]">

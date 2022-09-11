@@ -17,17 +17,7 @@ export async function createUser(address: User["address"]) {
   });
 }
 
-export async function verifyLogin(
-  walletAddress: string,
-  signature: string,
-  nonce: string
-): Promise<User | null> {
-  const signerAddress = utils.verifyMessage(nonce, signature);
-
-  if (walletAddress.toLowerCase() !== signerAddress.toLowerCase()) {
-    return null;
-  }
-
+export async function verifyLogin(walletAddress: string): Promise<User | null> {
   let user = await prisma.user.findUnique({
     where: { address: walletAddress },
   });

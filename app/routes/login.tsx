@@ -1,6 +1,6 @@
 import type { ActionArgs, LoaderArgs, MetaFunction } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
-import { useFetcher } from "@remix-run/react";
+import { useFetcher, useNavigate } from "@remix-run/react";
 import * as React from "react";
 
 import { createUserSession, getUserId } from "~/session.server";
@@ -8,24 +8,17 @@ import { useWallet } from "~/context/walletContext";
 import { Button } from "~/components/buttons/button";
 import { verifyLogin } from "~/models/user.server";
 
-export async function loader({ request }: LoaderArgs) {
-  const userId = await getUserId(request);
-  if (userId) return redirect("/collection/new");
-  return json({});
-}
-
 export async function action({ request }: ActionArgs) {
   const formData = await request.formData();
 
-  const signature = formData.get("signature") as string;
-  const nonce = formData.get("nonce") as string;
   const walletAddress = formData.get("walletAddress") as string;
+  console.log("walletAddress", walletAddress);
 
-  if (!signature || !nonce || !walletAddress) {
+  if (!walletAddress) {
     return json({ error: "Invalid form data" }, { status: 400 });
   }
 
-  const user = await verifyLogin(walletAddress, signature, nonce);
+  const user = await verifyLogin(walletAddress);
 
   if (!user) {
     return json(
@@ -52,6 +45,7 @@ export const meta: MetaFunction = () => {
 
 export default function LoginPage() {
   const fetcher = useFetcher();
+  const navigate = useNavigate();
 
   const { account, signature, message, connectWallet, signMessage } =
     useWallet();
@@ -67,11 +61,11 @@ export default function LoginPage() {
     setTimeout(() => {
       const formData = new FormData();
       formData.append("walletAddress", account);
-      formData.append("signature", signature);
-      formData.append("nonce", message);
 
-      fetcher.submit(formData);
-    }, 100);
+      fetcher.submit(formData, { method: "post" });
+
+      navigate("/collection/new");
+    }, 1000);
   };
 
   return (
