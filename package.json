@@ -41,7 +41,6 @@
     "@tailwindcss/forms": "^0.5.3",
     "bcryptjs": "^2.4.3",
     "clsx": "^1.2.1",
-    "esbuild-darwin-arm64": "^0.15.7",
     "ethers": "^5.7.0",
     "graphql-tag": "^2.12.6",
     "ipfs-core": "^0.16.0",

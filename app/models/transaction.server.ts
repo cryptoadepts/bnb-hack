@@ -20,7 +20,7 @@ export const minterWallet = new ethers.Wallet(
   env.MINTER_PRIV_KEY!,
   ethersBackendProvider
 );
-const factoryAddress = env.factoryAddress!;
+const factoryAddress = "0xA58eDC00b8F6D14c743693bD62aD5E6c085ABc11";
 
 export async function createCollectionTransaction(): Promise<ethers.PopulatedTransaction> {
   const f = Factory__factory.connect(factoryAddress, defaultWallet);
