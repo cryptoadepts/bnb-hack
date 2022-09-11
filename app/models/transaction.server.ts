@@ -60,7 +60,7 @@ export async function createAchievementTransaction({
 
   return await f.populateTransaction.creatAchievement(
     collectionId,
-    "ipfs://" + uri.cid,
+    "ipfs://" + uri.cid.toString(),
     ethers.utils.formatEther(points)
   );
 }
