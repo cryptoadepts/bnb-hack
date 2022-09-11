@@ -12,10 +12,32 @@ import { useWallet } from "~/context/walletContext";
 // components:
 import { CreateCollectionContainer } from "~/features/createCollection/containers/createCollectionContainer";
 import { getUserId } from "~/session.server";
+import graphqlClient from "~/graphql/client";
+import gql from "graphql-tag";
+import { getUserById } from "~/models/user.server";
 
 export async function loader({ request }: LoaderArgs) {
   const userId = await getUserId(request);
   if (!userId) return redirect("/login");
+
+  const user = await getUserById(userId);
+
+  const res = await graphqlClient.query({
+    query: gql` 
+        query {
+            collections(first: 1, where: {owner: "${user!.address}"}) {
+                id
+            }
+        }
+    `,
+    variables: {
+      owner: user!.address,
+    },
+  });
+
+  if (res.data.collections.length > 0) {
+    return redirect("/achievement/new");
+  }
 
   try {
     const tx = await createCollectionTransaction();
