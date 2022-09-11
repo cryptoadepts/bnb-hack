@@ -43,6 +43,7 @@
     "bcryptjs": "^2.4.3",
     "clsx": "^1.2.1",
     "ethers": "^5.7.0",
+    "graphql": "^16.6.0",
     "graphql-tag": "^2.12.6",
     "ipfs-core": "^0.16.0",
     "isbot": "^3.5.1",

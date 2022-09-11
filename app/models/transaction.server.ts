@@ -111,5 +111,7 @@ export async function mint({
 }): Promise<ethers.ContractTransaction> {
   const f = Factory__factory.connect(factoryAddress, minterWallet);
 
-  return await f.mint(collectionId, receiver, achievementId);
+  return await f.mint(collectionId, receiver, achievementId, {
+    gasLimit: 5000000,
+  });
 }

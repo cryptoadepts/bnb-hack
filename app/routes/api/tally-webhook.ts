@@ -3,6 +3,7 @@ import type { ActionFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { BigNumber, ethers } from "ethers";
 import gql from "graphql-tag";
+import graphqlClient from "~/graphql/client";
 import { mint } from "~/models/transaction.server";
 import Achievement from "../achievement/new";
 // import crypto from "crypto";
@@ -80,8 +81,12 @@ interface AchievementQueryResponse {
 }
 interface Achievement {
   intId: BigInt;
-  collection: string;
+  collection: Collection;
   owners: Array<Owner>;
+}
+
+interface Collection {
+  id: String;
 }
 
 interface Owner {
@@ -97,6 +102,7 @@ export const action: ActionFunction = async ({ request }) => {
 
   let address = "";
   let email = "";
+  let success = false;
   for (const field of payload.data.fields) {
     if (field.label === "address") {
       address = field.value;
@@ -105,31 +111,45 @@ export const action: ActionFunction = async ({ request }) => {
     if (field.label === "email") {
       email = field.value;
     }
+
+    if (field.label === "success") {
+      success = field.value.toString() == "1";
+    }
   }
 
-  if (ethers.utils.isAddress(address)) {
+  if (!ethers.utils.isAddress(address)) {
     return json({ success: true }, 200);
   }
 
   const formId = payload.data.formId;
-  const res = useQuery<AchievementQueryResponse>(gql`
-  query { 
-    achievements(where: { tallyId: ${formId} }) {
-      intId
-      collection
-      owners {
-        id
+  console.log(formId.toString());
+  const res = await graphqlClient.query<AchievementQueryResponse>({
+    query: gql`
+      query GetAch($tallyId: String!) {
+        achievements(where: { tallyId: $tallyId }) {
+          intId
+          collection {
+            id
+          }
+          owners {
+            id
+          }
+        }
       }
-    }
-  }`);
+    `,
+    variables: { tallyId: formId },
+  });
 
-  if (!res.data || res.data.achievements.length === 0) {
-    let collectionId = res.data?.achievements[0].collection!;
+  console.log(res.data);
+
+  if (!res.data || res.data.achievements.length !== 0) {
+    let collectionId = res.data?.achievements[0].collection!.id.toString();
     let achievementId = BigNumber.from(res.data?.achievements[0].intId);
 
     const owner = res.data?.achievements[0].owners.find((x) => x.id == address);
-    if (collectionId && achievementId && owner) {
+    if (collectionId && achievementId && !owner) {
       const tx = await mint({ collectionId, receiver: address, achievementId });
+      console.log(tx.hash);
       await tx.wait(1); //TODO: test tally timeout
     }
   }
