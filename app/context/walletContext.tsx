@@ -23,6 +23,7 @@ type WalletEventsSubscriber = (
   cb: (arg: any) => void
 ) => void;
 type WalletContextType = {
+  provider: Web3Provider | undefined;
   account: string;
   message: string;
   signature: string;
@@ -35,6 +36,7 @@ type WalletContextType = {
 };
 
 const WalletContext = createContext<WalletContextType>({
+  provider: undefined,
   account: "",
   message: "",
   signature: "",
@@ -224,6 +226,7 @@ export const WalletProvider: React.FC<Props> = ({ children }) => {
 
   const contextValue = useMemo(
     () => ({
+      provider: web3Provider,
       signature,
       message,
       account,
@@ -232,7 +235,7 @@ export const WalletProvider: React.FC<Props> = ({ children }) => {
       refreshState,
       sendTransaction,
     }),
-    [sendTransaction, signMessage, signature, message, account]
+    [web3Provider, sendTransaction, signMessage, signature, message, account]
   );
 
   return (
