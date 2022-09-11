@@ -6,6 +6,7 @@ import { Button } from "~/components/buttons/button";
 
 type Props = {
   isLoading: boolean;
+
   createAchievement: (
     imageHash: string,
     name: string,
