@@ -26,11 +26,8 @@ export const CreateAchievementContainer = (props: Props) => {
 
   const handleCreateAchievement = async () => {
     const image = images.find((image) => image.id === selectedPreset);
-    const maybeImg = await fetch(image?.src || "");
-    // TODO: add hash for each image to pass it to contract;
-    const hash = await maybeImg.blob();
 
-    createAchievement("hash", name, Number(points), tallyId);
+    createAchievement(image?.hash ?? "", name, Number(points), tallyId);
   };
 
   const inputClassName = "w-[min(550px,100%)]";
@@ -86,7 +83,11 @@ export const CreateAchievementContainer = (props: Props) => {
         />
       </div>
 
-      <Button type="submit" onClick={handleCreateAchievement}>
+      <Button
+        type="submit"
+        disabled={isLoading}
+        onClick={handleCreateAchievement}
+      >
         create
       </Button>
     </div>

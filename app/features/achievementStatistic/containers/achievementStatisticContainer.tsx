@@ -1,5 +1,6 @@
 import { AchievementCard } from "~/features/achievementStatistic/components/achievementCard";
 import { Button } from "~/components/buttons";
+import { useNavigate } from "@remix-run/react";
 
 type Props = {
   achievements: Array<any>;
@@ -7,6 +8,7 @@ type Props = {
 
 export const AchievementStatisticContainer = (props: Props) => {
   const { achievements } = props;
+  const navigate = useNavigate();
 
   return (
     <div className="flex w-[min(600px,100%)] flex-col gap-5">
@@ -16,7 +18,7 @@ export const AchievementStatisticContainer = (props: Props) => {
 
       <Button
         className="mt-[50px] self-start"
-        onClick={() => console.log("clicked")}
+        onClick={() => navigate("/achievement/new")}
       >
         add
       </Button>
