@@ -1,4 +1,4 @@
-import image1 from "~/images/Rectangle_0.jpg";
+import image1 from "~/images/Rectangle_0.png";
 import image2 from "~/images/Rectangle_1.jpg";
 import image3 from "~/images/Rectangle_2.jpg";
 import image4 from "~/images/Rectangle_3.jpg";

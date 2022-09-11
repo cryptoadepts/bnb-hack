@@ -59,7 +59,7 @@ type Props = {
 
 export const WalletProvider: React.FC<Props> = ({ children }) => {
   const [web3Provider, setWeb3Provider] = useState<Web3Provider>();
-  const [account, setAccount] = useState<string>();
+  const [account, setAccount] = useState<string>("");
   const [signature, setSignature] = useState("");
   const [error, setError] = useState<Error | string>("");
   const [chainId, setChainId] = useState<number>();

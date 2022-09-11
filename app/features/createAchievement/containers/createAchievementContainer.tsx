@@ -2,7 +2,7 @@ import { images } from "~/features/createAchievement/namespace";
 import { useState } from "react";
 import { CollectionPresets } from "~/features/createAchievement/components/collectionPresets";
 import { Input } from "~/components/input";
-import { Button } from "~/components/button";
+import { Button } from "~/components/buttons/button";
 
 type Props = {
   isLoading: boolean;

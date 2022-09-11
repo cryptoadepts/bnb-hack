@@ -4,7 +4,7 @@ import type { DeployMethod } from "~/features/createCollection/types";
 
 // components
 import { CollectionDeployMethod } from "~/features/createCollection/components/collectionDeployMethod";
-import { Button } from "~/components/button";
+import { Button } from "~/components/buttons/button";
 
 type Props = {
   isLoading: boolean;

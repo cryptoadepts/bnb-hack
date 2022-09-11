@@ -5,7 +5,7 @@ import * as React from "react";
 
 import { createUserSession, getUserId } from "~/session.server";
 import { useWallet } from "~/context/walletContext";
-import { Button } from "~/components/button";
+import { Button } from "~/components/buttons/button";
 import { verifyLogin } from "~/models/user.server";
 
 export async function loader({ request }: LoaderArgs) {
