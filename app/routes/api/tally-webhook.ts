@@ -117,7 +117,11 @@ export const action: ActionFunction = async ({ request }) => {
     }
   }
 
-  if (!ethers.utils.isAddress(address)) {
+  console.log("address", address);
+  console.log("email", email);
+  console.log("success", success);
+
+  if (!ethers.utils.isAddress(address) || !success) {
     return json({ success: true }, 200);
   }
 
