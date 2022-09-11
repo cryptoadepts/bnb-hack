@@ -30,7 +30,7 @@ type _Meta_ {
   will be null if the _meta field has a block constraint that asks for
   a block number. It will be filled if the _meta field has no block constraint
   and therefore asks for the latest  block
-
+  
   """
   block: _Block_!
 
@@ -53,11 +53,12 @@ enum _SubgraphErrorPolicy_ {
 
 type Achievement {
   id: ID!
+  intId: BigInt!
   name: String
   imageUrl: String
   tallyId: String
   score: BigInt!
-  owners: [Bytes!]!
+  owners(skip: Int = 0, first: Int = 100, orderBy: Owner_orderBy, orderDirection: OrderDirection, where: Owner_filter): [Owner!]!
   collection: Collection!
 }
 
@@ -70,6 +71,14 @@ input Achievement_filter {
   id_lte: ID
   id_in: [ID!]
   id_not_in: [ID!]
+  intId: BigInt
+  intId_not: BigInt
+  intId_gt: BigInt
+  intId_lt: BigInt
+  intId_gte: BigInt
+  intId_lte: BigInt
+  intId_in: [BigInt!]
+  intId_not_in: [BigInt!]
   name: String
   name_not: String
   name_gt: String
@@ -138,12 +147,7 @@ input Achievement_filter {
   score_lte: BigInt
   score_in: [BigInt!]
   score_not_in: [BigInt!]
-  owners: [Bytes!]
-  owners_not: [Bytes!]
-  owners_contains: [Bytes!]
-  owners_contains_nocase: [Bytes!]
-  owners_not_contains: [Bytes!]
-  owners_not_contains_nocase: [Bytes!]
+  owners_: Owner_filter
   collection: String
   collection_not: String
   collection_gt: String
@@ -172,6 +176,7 @@ input Achievement_filter {
 
 enum Achievement_orderBy {
   id
+  intId
   name
   imageUrl
   tallyId
@@ -241,6 +246,37 @@ enum Collection_orderBy {
 enum OrderDirection {
   asc
   desc
+}
+
+type Owner {
+  id: ID!
+  achievements(skip: Int = 0, first: Int = 100, orderBy: Achievement_orderBy, orderDirection: OrderDirection, where: Achievement_filter): [Achievement!]!
+}
+
+input Owner_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  achievements: [String!]
+  achievements_not: [String!]
+  achievements_contains: [String!]
+  achievements_contains_nocase: [String!]
+  achievements_not_contains: [String!]
+  achievements_not_contains_nocase: [String!]
+  achievements_: Achievement_filter
+
+  """Filter for the block changed event."""
+  _change_block: BlockChangedFilter
+}
+
+enum Owner_orderBy {
+  id
+  achievements
 }
 
 type Query {
@@ -324,6 +360,46 @@ type Query {
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
   ): [Achievement!]!
+  owner(
+    id: ID!
+
+    """
+    The block at which the query should be executed. Can either be a `{ hash:
+    Bytes }` value containing a block hash, a `{ number: Int }` containing the
+    block number, or a `{ number_gte: Int }` containing the minimum block
+    number. In the case of `number_gte`, the query will be executed on the
+    latest block only if the subgraph has progressed to or past the minimum
+    block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): Owner
+  owners(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: Owner_orderBy
+    orderDirection: OrderDirection
+    where: Owner_filter
+
+    """
+    The block at which the query should be executed. Can either be a `{ hash:
+    Bytes }` value containing a block hash, a `{ number: Int }` containing the
+    block number, or a `{ number_gte: Int }` containing the minimum block
+    number. In the case of `number_gte`, the query will be executed on the
+    latest block only if the subgraph has progressed to or past the minimum
+    block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [Owner!]!
 
   """Access to subgraph metadata"""
   _meta(block: Block_height): _Meta_
@@ -410,6 +486,46 @@ type Subscription {
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
   ): [Achievement!]!
+  owner(
+    id: ID!
+
+    """
+    The block at which the query should be executed. Can either be a `{ hash:
+    Bytes }` value containing a block hash, a `{ number: Int }` containing the
+    block number, or a `{ number_gte: Int }` containing the minimum block
+    number. In the case of `number_gte`, the query will be executed on the
+    latest block only if the subgraph has progressed to or past the minimum
+    block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): Owner
+  owners(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: Owner_orderBy
+    orderDirection: OrderDirection
+    where: Owner_filter
+
+    """
+    The block at which the query should be executed. Can either be a `{ hash:
+    Bytes }` value containing a block hash, a `{ number: Int }` containing the
+    block number, or a `{ number_gte: Int }` containing the minimum block
+    number. In the case of `number_gte`, the query will be executed on the
+    latest block only if the subgraph has progressed to or past the minimum
+    block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [Owner!]!
 
   """Access to subgraph metadata"""
   _meta(block: Block_height): _Meta_
