@@ -30,6 +30,8 @@ export async function createAchievementTransaction({
   if (!provider) return null;
 
   console.log("IPFS_URL", IPFS_URL);
+  console.log("INFURA_IPFS_PROJECT_ID", INFURA_IPFS_PROJECT_ID);
+  console.log("INFURA_IPFS_PROJECT_SECRET", INFURA_IPFS_PROJECT_SECRET);
 
   const ipfsClient = create({
     url: IPFS_URL!,

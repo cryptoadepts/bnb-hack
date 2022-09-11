@@ -89,7 +89,7 @@ const Achievement = () => {
   };
 
   return (
-    <main className="relative mx-auto mt-[50px] flex h-full w-[min(840px,100%)] flex-col justify-start px-5">
+    <main className="relative mx-auto mt-[50px] flex h-full w-[min(840px,100%)] flex-col justify-start px-5 pb-5">
       <CreateAchievementContainer
         isLoading={isLoading}
         createAchievement={handleCreateAchievement}

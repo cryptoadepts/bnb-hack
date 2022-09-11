@@ -24,11 +24,11 @@ export async function loader({ request }: LoaderArgs) {
 
   const res = await graphqlClient.query({
     query: gql` 
-        query {
-            collections(first: 1, where: {owner: "${user!.address}"}) {
-                id
-            }
+      query {
+        collections(first: 1, where: {owner: "${user!.address}"}) {
+          id
         }
+      }
     `,
     variables: {
       owner: user!.address,
