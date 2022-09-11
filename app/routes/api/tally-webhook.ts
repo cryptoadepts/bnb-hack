@@ -5,7 +5,6 @@ import { BigNumber, ethers } from "ethers";
 import gql from "graphql-tag";
 import graphqlClient from "~/graphql/client";
 import { mint } from "~/models/transaction.server";
-import Achievement from "../achievement/new";
 // import crypto from "crypto";
 
 // {
