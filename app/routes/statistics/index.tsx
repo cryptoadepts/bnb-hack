@@ -13,6 +13,7 @@ import { OutlineButton } from "~/components/buttons";
 import { clsx } from "clsx";
 import graphqlClient from "~/graphql/client";
 import gql from "graphql-tag";
+import { getUserById } from "~/models/user.server";
 
 type ActiveTab = "feed" | "achievementStatistic";
 
@@ -25,10 +26,26 @@ export async function loader({ request }: LoaderArgs) {
   const userId = await getUserId(request);
   if (!userId) return redirect("/login");
 
-  const res = await graphqlClient.query({
+  const user = await getUserById(userId);
+
+  console.log("user", user);
+  const collection = await graphqlClient.query({
     query: gql`
       query {
-        achievements {
+        collections(first: 1, where: {owner: "${user!.address}"}) {
+          id
+        }
+      }
+    `,
+    variables: {
+      owner: user!.address,
+    },
+  });
+
+  const res = await graphqlClient.query({
+    query: gql`
+      query getAchievement($collectionId: ID!) {
+        achievements(where: { collection_: { id: $collectionId } }) {
           id
           imageUrl
           name
@@ -39,6 +56,9 @@ export async function loader({ request }: LoaderArgs) {
         }
       }
     `,
+    variables: {
+      collectionId: collection.data.collections[0].id,
+    },
   });
 
   return json({
