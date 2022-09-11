@@ -15,9 +15,9 @@ export const CollectionPresets = (props: Props) => {
       {images.map((image) => (
         <button
           className={clsx(
-            "overflow-hidden rounded-xl border-2 border-[#575757] transition-all duration-300",
+            "flex items-center justify-center overflow-hidden rounded-xl border-2 border-[#575757] transition-all duration-300",
             {
-              "hover:border-pink-600 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:border-[#575757]":
+              "hover:border-pink-800 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:border-[#575757]":
                 true,
               "!border-pink-600": selectedPreset === image.id,
             }
@@ -27,9 +27,9 @@ export const CollectionPresets = (props: Props) => {
           onClick={() => onSelectPreset(image.id)}
         >
           <img
-            className="object-none"
-            width={105}
-            height={105}
+            className="bg-black"
+            width={80}
+            height={80}
             src={image.src}
             alt={`preset-${image.id}`}
           />

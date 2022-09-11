@@ -29,6 +29,7 @@
     "/public/build"
   ],
   "dependencies": {
+    "@apollo/client": "^3.6.9",
     "@heroicons/react": "^2.0.10",
     "@prisma/client": "^4.2.1",
     "@remix-run/dev": "1.7.0",
@@ -40,7 +41,9 @@
     "@tailwindcss/forms": "^0.5.3",
     "bcryptjs": "^2.4.3",
     "clsx": "^1.2.1",
+    "esbuild-darwin-arm64": "^0.15.7",
     "ethers": "^5.7.0",
+    "graphql-tag": "^2.12.6",
     "ipfs-core": "^0.16.0",
     "isbot": "^3.5.1",
     "react": "^18.2.0",
