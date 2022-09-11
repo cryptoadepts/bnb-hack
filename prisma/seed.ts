@@ -1,42 +1,27 @@
 import { PrismaClient } from "@prisma/client";
-import bcrypt from "bcryptjs";
 
 const prisma = new PrismaClient();
 
 async function seed() {
-  const email = "rachel@remix.run";
+  const email = "lopson@superdao.co";
+  const address = "0x017007475F9A3eA599EF13133CC9Bcb7374deb38";
 
   // cleanup the existing database
-  await prisma.user.delete({ where: { email } }).catch(() => {
+  await prisma.user.delete({ where: { address } }).catch(() => {
     // no worries if it doesn't exist yet
   });
-
-  const hashedPassword = await bcrypt.hash("racheliscool", 10);
 
   const user = await prisma.user.create({
     data: {
       email,
-      password: {
-        create: {
-          hash: hashedPassword,
-        },
-      },
+      address,
     },
   });
 
-  await prisma.note.create({
+  const form = await prisma.externalForm.create({
     data: {
-      title: "My first note",
-      body: "Hello, world!",
-      userId: user.id,
-    },
-  });
-
-  await prisma.note.create({
-    data: {
-      title: "My second note",
-      body: "Hello, world!",
-      userId: user.id,
+      name: "SuperDAO",
+      tallyId: "3xXEWo",
     },
   });
 

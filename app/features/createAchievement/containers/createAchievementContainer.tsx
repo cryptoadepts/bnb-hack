@@ -85,7 +85,9 @@ export const CreateAchievementContainer = (props: Props) => {
         />
       </div>
 
-      <Button type="submit" onClick={handleCreateAchievement} />
+      <Button type="submit" onClick={handleCreateAchievement}>
+        create
+      </Button>
     </div>
   );
 };

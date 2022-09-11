@@ -1,4 +1,13 @@
 import { useWallet } from "~/context/walletContext";
+import type { LoaderArgs } from "@remix-run/node";
+import { json, redirect } from "@remix-run/node";
+import { getUserId } from "~/session.server";
+
+export async function loader({ request }: LoaderArgs) {
+  const userId = await getUserId(request);
+  if (userId) return redirect("/collection/new");
+  return json({});
+}
 
 export default function Index() {
   const { connectWallet, signMessage } = useWallet();
