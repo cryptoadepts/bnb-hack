@@ -87,7 +87,7 @@ export const WalletProvider: React.FC<Props> = ({ children }) => {
       if (!web3Provider) return;
       try {
         const signer = web3Provider.getSigner();
-        return await signer.sendTransaction({});
+        return await signer.sendTransaction(tx);
       } catch (error: any) {
         setError(error);
       }

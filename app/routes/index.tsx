@@ -14,6 +14,8 @@ export async function loader({ request }: LoaderArgs) {
 export default function Index() {
   const data = useLoaderData<{ userId: string }>();
 
+  const to = data.userId ? "/collection/new" : "/login";
+
   return (
     <main
       className={clsx(
@@ -32,7 +34,7 @@ export default function Index() {
         create your own collection of nfts for users
       </h1>
       <Link
-        to="/collection/new"
+        to={to}
         className="z-10 mt-[100px] rounded-full bg-[#FF0099] py-5 px-12 text-[100px] font-bold leading-[110%]"
       >
         try now →

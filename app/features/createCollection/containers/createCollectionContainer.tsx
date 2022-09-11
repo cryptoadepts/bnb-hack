@@ -12,15 +12,12 @@ type Props = {
 };
 
 export const CreateCollectionContainer = (props: Props) => {
-  const { createCollection } = props;
+  const { createCollection, isLoading } = props;
 
   const [deployCollection, setDeployCollection] =
     useState<DeployMethod>("default");
-  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const handleCreateCollection = async () => {
-    setIsLoading(true);
-
     createCollection();
   };
 
@@ -34,7 +31,11 @@ export const CreateCollectionContainer = (props: Props) => {
         onSelectDeployCollection={setDeployCollection}
       />
 
-      <Button type="submit" onClick={handleCreateCollection}>
+      <Button
+        type="submit"
+        disabled={isLoading}
+        onClick={handleCreateCollection}
+      >
         create
       </Button>
     </div>

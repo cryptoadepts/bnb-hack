@@ -1,9 +1,9 @@
 import { useState } from "react";
 
 // API
-import type { ActionFunction, LoaderArgs } from "@remix-run/node";
+import type { LoaderArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
-import { useActionData } from "@remix-run/react";
+import { useLoaderData, useNavigate } from "@remix-run/react";
 import { createCollectionTransaction } from "~/models/transaction.server";
 
 // Wallet:
@@ -17,22 +17,18 @@ export async function loader({ request }: LoaderArgs) {
   const userId = await getUserId(request);
   if (!userId) return redirect("/login");
 
-  return json({});
-}
-
-export const action: ActionFunction = async ({ request }) => {
-  const tx = await createCollectionTransaction();
-
   try {
+    const tx = await createCollectionTransaction();
     return json({ tx: { to: tx.to, data: tx.data } });
   } catch (error: unknown) {
     console.log("create collection transaction failed ❌", { error });
     return new Response("ERROR", { status: 500 });
   }
-};
+}
 
 const Collection = () => {
-  const data = useActionData<typeof action>();
+  const data = useLoaderData();
+  const navigate = useNavigate();
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -42,9 +38,10 @@ const Collection = () => {
     setIsLoading(true);
 
     const tx = await sendTransaction(data.tx);
-    console.log(tx);
+    await tx?.wait();
 
     setIsLoading(false);
+    navigate("/achievement/new");
   };
 
   return (
