@@ -1,5 +1,4 @@
 import { useState } from "react";
-import image1 from "~/images/Rectangle_0.png";
 
 // API
 import type { LoaderArgs } from "@remix-run/node";
@@ -10,8 +9,10 @@ import { getUserId } from "~/session.server";
 // components
 import { AchievementStatisticContainer } from "~/features/achievementStatistic/containers/achievementStatisticContainer";
 import { FeedContainer } from "~/features/feed/containers/feedContainer";
-import { Button, OutlineButton } from "~/components/buttons";
+import { OutlineButton } from "~/components/buttons";
 import { clsx } from "clsx";
+import graphqlClient from "~/graphql/client";
+import gql from "graphql-tag";
 
 type ActiveTab = "feed" | "achievementStatistic";
 
@@ -24,15 +25,26 @@ export async function loader({ request }: LoaderArgs) {
   const userId = await getUserId(request);
   if (!userId) return redirect("/login");
 
-  // TODO: change to the graph API:
-  const mockAchievements = new Array(4).fill(null).map((_) => ({
-    image: image1,
-    title: "reward for the article",
-    count: 4,
-    tallyId: "xDbnaw",
-  }));
+  const res = await graphqlClient.query({
+    query: gql`
+      query {
+        achievements {
+          id
+          imageUrl
+          name
+          owners {
+            id
+          }
+          tallyId
+        }
+      }
+    `,
+  });
 
-  return json({ achievements: mockAchievements, feed: [] });
+  return json({
+    achievements: res.data.achievements,
+    feed: [],
+  });
 }
 
 const Statistics = () => {
@@ -58,6 +70,7 @@ const Statistics = () => {
             "!border-pink-600 hover:!border-pink-800": activeTab === "feed",
           })}
           onClick={() => setActiveTab("feed")}
+          disabled
         >
           feed
         </OutlineButton>

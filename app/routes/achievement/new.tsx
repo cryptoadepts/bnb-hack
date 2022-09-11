@@ -3,21 +3,42 @@ import { useState } from "react";
 // API
 import type { LoaderArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
+import { useLoaderData, useNavigate } from "@remix-run/react";
 
 // Wallet:
 import { useWallet } from "~/context/walletContext";
 
 // components:
 import { CreateAchievementContainer } from "~/features/createAchievement/containers/createAchievementContainer";
-import { getUserId } from "~/session.server";
+import { getUser, getUserId } from "~/session.server";
 import { createAchievementTransaction } from "~/service/blockchain";
+import graphqlClient from "~/graphql/client";
+import gql from "graphql-tag";
+import { getUserById } from "~/models/user.server";
 
 export async function loader({ request }: LoaderArgs) {
   const userId = await getUserId(request);
   if (!userId) return redirect("/login");
 
+  const user = await getUserById(userId);
+
+  const res = await graphqlClient.query({
+    query: gql`
+      query {
+          collections(first: 1, where: {owner: "${user!.address}"}) {
+              id
+          }
+      }
+    `,
+    variables: {
+      owner: user!.address,
+    },
+  });
+
+  if (!res.data.collections.length) return redirect("/collection/new");
+
   return json({
+    collection: res.data.collections[0],
     ENV: {
       IPFS_URL: process.env.IPFS_URL,
       INFURA_IPFS_PROJECT_ID: process.env.INFURA_IPFS_PROJECT_ID,
@@ -30,6 +51,9 @@ const Achievement = () => {
   const data = useLoaderData();
   const { IPFS_URL, INFURA_IPFS_PROJECT_ID, INFURA_IPFS_PROJECT_SECRET } =
     data?.ENV;
+  const { collection } = data;
+
+  const navigate = useNavigate();
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -48,7 +72,7 @@ const Achievement = () => {
       IPFS_URL,
       INFURA_IPFS_PROJECT_ID,
       INFURA_IPFS_PROJECT_SECRET,
-      collectionId: "0x74ad4df7062880570389473b1ee98dcdc8f4e270",
+      collectionId: collection.id,
       imageHash,
       name,
       points,
@@ -56,12 +80,12 @@ const Achievement = () => {
     });
     if (!transaction) return;
 
-    console.log("transaction", transaction);
-
     const tx = await sendTransaction(transaction);
     await tx?.wait();
 
     setIsLoading(false);
+
+    navigate("/statistics");
   };
 
   return (
