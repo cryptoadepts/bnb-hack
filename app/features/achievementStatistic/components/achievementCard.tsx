@@ -11,7 +11,7 @@ type Props = {
 };
 
 export const AchievementCard = (props: Props) => {
-  const { name, owners, tallyId } = props;
+  const { imageUrl, name, owners, tallyId } = props;
 
   return (
     <div
@@ -20,7 +20,7 @@ export const AchievementCard = (props: Props) => {
         "transition duration-200 ease-in-out hover:-translate-x-1"
       )}
     >
-      <img src={image1} alt={name} width={130} height={130} />
+      <img src={imageUrl ?? image1} alt={name} width={130} height={130} />
 
       <div className="flex flex-col justify-center gap-5">
         <h3 className="text-[32px] font-medium leading-[40px]">{name}</h3>
