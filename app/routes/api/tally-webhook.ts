@@ -1,6 +1,8 @@
+import { useQuery } from "@apollo/client";
 import type { ActionFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { BigNumber, ethers } from "ethers";
+import gql from "graphql-tag";
 import { mint } from "~/models/transaction.server";
 import Achievement from "../achievement/new";
 // import crypto from "crypto";
@@ -73,6 +75,19 @@ import Achievement from "../achievement/new";
 // }
 // }
 
+interface AchievementQueryResponse {
+  achievements: Achievement[];
+}
+interface Achievement {
+  intId: BigInt;
+  collection: string;
+  owners: Array<Owner>;
+}
+
+interface Owner {
+  id: String;
+}
+
 export const action: ActionFunction = async ({ request }) => {
   if (request.method !== "POST") {
     return json({ message: "Method not allowed" }, 405);
@@ -97,15 +112,28 @@ export const action: ActionFunction = async ({ request }) => {
   }
 
   const formId = payload.data.formId;
+  const res = useQuery<AchievementQueryResponse>(gql`
+  query { 
+    achievements(where: { tallyId: ${formId} }) {
+      intId
+      collection
+      owners {
+        id
+      }
+    }
+  }`);
 
-  //TODO: get achievement id by formId
-  const collectionId = "";
-  const achievementId = BigNumber.from(0);
+  if (!res.data || res.data.achievements.length === 0) {
+    let collectionId = res.data?.achievements[0].collection!;
+    let achievementId = BigNumber.from(res.data?.achievements[0].intId);
 
-  if (collectionId != "") {
-    const tx = await mint({ collectionId, receiver: address, achievementId });
-    await tx.wait(1); //TODO: test tally timeout
+    const owner = res.data?.achievements[0].owners.find((x) => x.id == address);
+    if (collectionId && achievementId && owner) {
+      const tx = await mint({ collectionId, receiver: address, achievementId });
+      await tx.wait(1); //TODO: test tally timeout
+    }
   }
+
   /* Validate the webhook */
   // const signature = request.headers.get("X-Hub-Signature-256");
   // const generatedSignature = `sha256=${crypto
