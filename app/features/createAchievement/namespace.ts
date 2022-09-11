@@ -1,9 +1,9 @@
 import image1 from "~/images/Rectangle_0.png";
-import image2 from "~/images/Rectangle_1.jpg";
-import image3 from "~/images/Rectangle_2.jpg";
-import image4 from "~/images/Rectangle_3.jpg";
-import image5 from "~/images/Rectangle_4.jpg";
-import image6 from "~/images/Rectangle_5.jpg";
+import image2 from "~/images/Rectangle_1.png";
+import image3 from "~/images/Rectangle_2.png";
+import image4 from "~/images/Rectangle_3.png";
+import image5 from "~/images/Rectangle_4.png";
+import image6 from "~/images/Rectangle_5.png";
 
 export const images = [
   {
