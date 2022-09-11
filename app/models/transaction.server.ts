@@ -13,7 +13,7 @@ const ipfsClient = create({
 });
 
 export const ethersBackendProvider = ethers.getDefaultProvider(
-  env.BLOCKCHAIN_URL!
+  "https://bsc-testnet.nodereal.io/v1/e9a36765eb8a40b9bd12e680a1fd2bc5"
 );
 export const defaultWallet = ethers.Wallet.createRandom();
 export const minterWallet = new ethers.Wallet(
@@ -111,7 +111,5 @@ export async function mint({
 }): Promise<ethers.ContractTransaction> {
   const f = Factory__factory.connect(factoryAddress, minterWallet);
 
-  return await f.mint(collectionId, receiver, achievementId, {
-    gasLimit: 5000000,
-  });
+  return await f.mint(collectionId, receiver, achievementId);
 }
