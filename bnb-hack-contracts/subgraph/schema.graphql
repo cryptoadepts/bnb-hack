@@ -1,0 +1,22 @@
+type Collection @entity {
+  id: ID!
+  owner: Bytes!
+  token: Bytes!
+  achievements: [Achievement!]! @derivedFrom(field: "collection")
+}
+
+type Achievement @entity {
+  id: ID!
+  intId: BigInt!
+  name: String
+  imageUrl: String
+  tallyId: String
+  score: BigInt!
+  owners: [Owner!]! @derivedFrom(field: "achievements")
+  collection: Collection!
+}
+
+type Owner @entity {
+  id: ID!
+  achievements: [Achievement!]!
+}
